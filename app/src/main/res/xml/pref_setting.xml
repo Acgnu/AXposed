@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/setting">
+        <SwitchPreference
+                android:defaultValue="false"
+                android:key="pvpopen"
+                android:title="@string/pref_pvp_open" />
+
+        <SwitchPreference
+                android:defaultValue="false"
+                android:key="pvpmask"
+                android:title="@string/pref_pvp_mask" />
+
+        <SwitchPreference
+                android:defaultValue="false"
+                android:key="open"
+                android:title="@string/pref_open"/>
+        <EditTextPreference
+                android:dependency="open"
+                android:hint="@string/target_hint"
+                android:key="target"
+                android:title="@string/target"/>
+    </PreferenceCategory>
+</PreferenceScreen>

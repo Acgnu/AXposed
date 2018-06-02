@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Acgnu+</string>
+    <string name="setting">设置</string>
+    <string name="pref_open">启用MSG保护</string>
+    <string name="pref_pvp_open">启用PVP保护</string>
+    <string name="pref_pvp_mask">启用PVP遮罩</string>
+    <string name="target">目标</string>
+    <string name="target_hint">目标UIN</string>
+</resources>

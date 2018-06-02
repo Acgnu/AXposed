@@ -136,10 +136,12 @@ public class XposedHook implements IXposedHookLoadPackage {
             findAndHookMethod("com.tencent.mobileqq.activity.BaseChatPie", loadPackageParam.classLoader, "k", Intent.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    Intent intent = (Intent) param.args[0];
-                    String uin = intent.getStringExtra("uin");
-                    if (PreferencesUtils.isMatchTargetQQ(uin)) {
-                        param.args[0] = null;
+                    if (PreferencesUtils.isOpen()) {
+                        Intent intent = (Intent) param.args[0];
+                        String uin = intent.getStringExtra("uin");
+                        if (PreferencesUtils.isMatchTargetQQ(uin)) {
+                            param.args[0] = null;
+                        }
                     }
                 }
             });

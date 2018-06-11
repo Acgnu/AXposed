@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                             getActivity().startService(svc);
                         }
                     }
-                    PreferencesUtils.destroyInstance();
+                    PreferencesUtils.reload();
                     return true;
                 }
             };
@@ -62,11 +62,19 @@ public class MainActivity extends AppCompatActivity {
             Preference pvpopen = findPreference("pvpopen");
             Preference open = findPreference("open");
             Preference target = findPreference("target");
+            Preference storageset = findPreference("storageset");
 
             pvpmask.setOnPreferenceChangeListener(listener);
             pvpopen.setOnPreferenceChangeListener(listener);
             open.setOnPreferenceChangeListener(listener);
             target.setOnPreferenceChangeListener(listener);
+            storageset.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivity(new Intent(getActivity(), StorageActivity.class));
+                    return false;
+                }
+            });
         }
     }
 }

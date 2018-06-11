@@ -1,7 +1,9 @@
 package org.acgnu.xposed;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.XModuleResources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import org.acgnu.tool.PreferencesUtils;
@@ -20,12 +23,14 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static org.acgnu.tool.XposedUtils.findFieldByClassAndTypeAndName;
 
-public class XposedHook implements IXposedHookLoadPackage {
+public class XposedHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private String QQ_PACKAGE = "com.tencent.mobileqq";
     private String PVP_PACKAGE = "com.tencent.tmgp.sgame";
 
     private String mRecentUserUin = null;
     private Context qqContext = null;
+//    private Activity pvpActivity = null;
+    public static XModuleResources sModRes;
 
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
@@ -92,7 +97,7 @@ public class XposedHook implements IXposedHookLoadPackage {
 
                                     //修改目标显示昵称
                                     Field nickname = findFieldByClassAndTypeAndName(param.args[1].getClass(), String.class, "b");
-                                    String nk = "File Assistant";
+                                    String nk = "靠谱文件传输助手";
                                     nickname.set(param.args[1], nk);
                                 }
                             }
@@ -108,7 +113,7 @@ public class XposedHook implements IXposedHookLoadPackage {
                             @Override
                             public void onClick(View view) {
                                 //hook掉目标点击事件
-                                Toast.makeText(qqContext, "An error has occurred: [0x00025FEAB]", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(qqContext, "请在Windows客户端完成文件传输操作", Toast.LENGTH_SHORT).show();
                             }
                         });
                         mRecentUserUin = null;
@@ -125,8 +130,8 @@ public class XposedHook implements IXposedHookLoadPackage {
                     new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    if (!TextUtils.isEmpty(mRecentUserUin) && null != qqContext) {
-                        param.args[3] = ContextCompat.getDrawable(qqContext, R.drawable.feb);
+                    if (!TextUtils.isEmpty(mRecentUserUin)){//&& null != qqContext) {
+                        param.args[3] = sModRes.getDrawable(R.drawable.feb);//ContextCompat.getDrawable(qqContext, R.drawable.feb);
                     }
                 }
             });
@@ -149,6 +154,7 @@ public class XposedHook implements IXposedHookLoadPackage {
 
         if (loadPackageParam.packageName.equals(PVP_PACKAGE)) {
             if (PreferencesUtils.isPVPOpen()) {
+//                qqContext.startService()
                 final Class<?> crashNotifyHandler = findClass("com.tsf4g.apollo.report.CrashNotifyHandler", loadPackageParam.classLoader);
                 findAndHookMethod(crashNotifyHandler, "Instance", new XC_MethodHook() {
                     @Override
@@ -158,6 +164,25 @@ public class XposedHook implements IXposedHookLoadPackage {
                     }
                 });
             }
+
+            //如果mask是开启状态，农药启动的时候自动开启mask
+//            findAndHookMethod("com.tencent.tmgp.sgame.SGameActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
+//                @Override
+//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    if (pvpActivity == null) {
+//                        pvpActivity = (Activity) param.thisObject;
+//                    }
+//                    if (PreferencesUtils.pvpmask()) {
+//                        Intent mask = new Intent(pvpActivity, "");
+//                        pvpActivity.startService(mask);
+//                    }
+//                }
+//            });
         }
+    }
+
+    @Override
+    public void initZygote(StartupParam startupParam) throws Throwable {
+        sModRes = XModuleResources.createInstance(startupParam.modulePath, null);
     }
 }

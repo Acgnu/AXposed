@@ -58,11 +58,11 @@ public class MaskService extends Service
         wmParams.gravity = Gravity.LEFT | Gravity.TOP;
 
         // 以屏幕左上角为原点，设置x、y初始值，相对于gravity
-        wmParams.x = 1270;
+        wmParams.x = 1740;
         wmParams.y = 0;
 
         // 设置悬浮窗口长宽数据
-        wmParams.width = 280;
+        wmParams.width = 120;
         wmParams.height = 100;
 
         LayoutInflater inflater = LayoutInflater.from(getApplication());
@@ -75,7 +75,7 @@ public class MaskService extends Service
         mPoaritLayout = (LinearLayout) inflater.inflate(R.layout.poarit_layout, null);
         wmParams.x = 0;
         wmParams.y = 0;
-        wmParams.width = 130;
+        wmParams.width = 195;
         wmParams.height = 120;
         wmParams.format = PixelFormat.TRANSPARENT;
         mWindowManager.addView(mPoaritLayout, wmParams);

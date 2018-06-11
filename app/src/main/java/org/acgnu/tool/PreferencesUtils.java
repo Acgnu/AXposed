@@ -39,7 +39,7 @@ public class PreferencesUtils {
         return getInstance().getString("target", "");
     }
 
-    public static void destroyInstance(){
+    public static void reload(){
         instance = null;
     }
 

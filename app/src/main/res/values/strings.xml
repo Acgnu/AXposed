@@ -12,4 +12,6 @@
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
     <string name="unpoint">未指定</string>
+    <string name="cus_path_hint">根目录文件夹名</string>
+    <string name="reset_path">重置路径</string>
 </resources>

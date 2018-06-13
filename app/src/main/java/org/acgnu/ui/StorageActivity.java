@@ -1,28 +1,26 @@
 package org.acgnu.ui;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.preference.MultiSelectListPreference;
-import android.preference.Preference;
-import android.support.constraint.solver.widgets.ConstraintAnchor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 import org.acgnu.adapter.MyAppAdapter;
 import org.acgnu.model.MyAppinfo;
-import org.acgnu.tool.MyLog;
 import org.acgnu.xposed.R;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class StorageActivity extends AppCompatActivity {
     private List<MyAppinfo> appdata = new ArrayList<MyAppinfo>();
     private Context context;
+    private SharedPreferences sharedPreferences;
     ListView listView;
 
     @Override
@@ -31,12 +29,14 @@ public class StorageActivity extends AppCompatActivity {
         context = getApplicationContext();
         setContentView(R.layout.activity_storage);
         new LoadApps().execute();
+//        ActionBar mActionBar=getSupportActionBar();
+//        mActionBar.setHomeButtonEnabled(true);
+//        mActionBar.setDisplayHomeAsUpEnabled(true);
         listView = (ListView) findViewById(R.id.applist);
+        sharedPreferences = context.getSharedPreferences(context.getPackageName() + "_preferences",  Context.MODE_WORLD_READABLE);
     }
 
     public class LoadApps extends AsyncTask<Void, Void, Void> {
-        List<CharSequence> appNames = new ArrayList<>();
-        List<CharSequence> packageNames = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
@@ -46,27 +46,19 @@ public class StorageActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            List<String[]> sortedApps = new ArrayList<>();
-
             for (ApplicationInfo app : packages) {
                 if (isAllowedApp(app)) {
-                    sortedApps.add(new String[]{app.packageName, app.loadLabel(pm).toString()});
+                    MyAppinfo myappinfo = new MyAppinfo(app.loadLabel(pm).toString(), app.packageName, app.loadIcon(pm), sharedPreferences.getString(app.packageName, getString(R.string.unpoint)));
+                    appdata.add(myappinfo);
                 }
             }
 
-            Collections.sort(sortedApps, new Comparator<String[]>() {
+            Collections.sort(appdata, new Comparator<MyAppinfo>() {
                 @Override
-                public int compare(String[] entry1, String[] entry2) {
-                    return entry1[1].compareToIgnoreCase(entry2[1]);
+                public int compare(MyAppinfo entry1, MyAppinfo entry2) {
+                    return entry1.getAppname().compareToIgnoreCase(entry2.getAppname());
                 }
             });
-
-            for (int i = 0; i < sortedApps.size(); i++) {
-                appNames.add(sortedApps.get(i)[1] + "\n" + "(" + sortedApps.get(i)[0] + ")");
-                packageNames.add(sortedApps.get(i)[0]);
-                MyAppinfo myappinfo = new MyAppinfo(sortedApps.get(i)[1], sortedApps.get(i)[0], null);
-                appdata.add(myappinfo);
-            }
             return null;
         }
 
@@ -82,9 +74,16 @@ public class StorageActivity extends AppCompatActivity {
             return false;
         }
 
-        if ("com.android.MtpApplication".contains(appInfo.packageName)) {
+        if ("com.android.MtpApplication".contains(appInfo.packageName)
+                || "org.acgnu.xposed".contains(appInfo.packageName)) {
             return false;
         }
         return true;
     }
+
+//    @Override
+//    public boolean onSupportNavigateUp() {
+//        finish();
+//        return super.onSupportNavigateUp();
+//    }
 }

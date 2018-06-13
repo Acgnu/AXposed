@@ -17,6 +17,15 @@
             </intent-filter>
         </activity>
 
+        <activity
+                android:label="@string/storage_setting"
+                android:name="org.acgnu.ui.StorageActivity">
+            <intent-filter>
+                <action android:name="org.acgnu.activity.applist" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <service
                 android:name="org.acgnu.service.MaskService"
                 android:enabled="true"
@@ -33,9 +42,6 @@
         <meta-data
                 android:name="xposedminversion"
                 android:value="52"/>
-
-        <activity android:name="org.acgnu.ui.StorageActivity">
-        </activity>
     </application>
 
 </manifest>

@@ -24,8 +24,10 @@
                 android:defaultValue="false"
                 android:key="storageopen"
                 android:title="@string/storage_open"/>
-        <EditTextPreference
-                android:key="storageset"
-                android:title="@string/storage_setting"/>
+        <PreferenceScreen
+                android:title="@string/storage_setting"
+                android:summary="">
+            <intent android:action="org.acgnu.activity.applist"  />
+        </PreferenceScreen>
     </PreferenceCategory>
 </PreferenceScreen>

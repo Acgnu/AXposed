@@ -62,20 +62,13 @@ public class MainActivity extends AppCompatActivity {
             Preference pvpopen = findPreference("pvpopen");
             Preference open = findPreference("open");
             Preference target = findPreference("target");
-            Preference storageset = findPreference("storageset");
+            Preference storageopen = findPreference("storageopen");
 
             pvpmask.setOnPreferenceChangeListener(listener);
             pvpopen.setOnPreferenceChangeListener(listener);
             open.setOnPreferenceChangeListener(listener);
             target.setOnPreferenceChangeListener(listener);
-            storageset.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startActivity(new Intent(getActivity(), StorageActivity.class));
-//                    preference.
-                    return false;
-                }
-            });
+            storageopen.setOnPreferenceChangeListener(listener);
         }
     }
 }

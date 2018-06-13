@@ -6,7 +6,7 @@ import de.robv.android.xposed.XposedBridge;
 public class MyLog {
     public static final String TAG = "###Acgnu###：";
     public static void log(String content) {
-        if (true) {
+        if (false) {
             Log.d(TAG, content);
             XposedBridge.log(TAG + content);
         }

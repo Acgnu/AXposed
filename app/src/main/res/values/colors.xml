@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
+    <color name="dark">#FF000000</color>
+    <color name="touchColor">#bbe6f4</color>
 </resources>

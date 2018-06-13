@@ -2,6 +2,7 @@ package org.acgnu.tool;
 
 
 import android.text.TextUtils;
+import android.util.Log;
 import de.robv.android.xposed.XSharedPreferences;
 import org.acgnu.xposed.PackageHooker;
 
@@ -39,6 +40,10 @@ public class PreferencesUtils {
         return getInstance().getString("target", "");
     }
 
+    public static boolean isStorageOpen() {
+        return getInstance().getBoolean("storageopen", false);
+    }
+
     public static void reload(){
         instance = null;
     }
@@ -55,6 +60,17 @@ public class PreferencesUtils {
             }
         }
         return false;
+    }
+
+    public static boolean hasCustomerPath(String packageName) {
+        String path = getInstance().getString(packageName, "");
+        Log.d("hasCustomerPath", path);
+        return TextUtils.isEmpty(path) ? false : true;
+    }
+
+    public static String getCustomerPath(String packageName, String defaultPath) {
+        String path = getInstance().getString(packageName, "");
+        return TextUtils.isEmpty(path) ? defaultPath : path;
     }
 }
 

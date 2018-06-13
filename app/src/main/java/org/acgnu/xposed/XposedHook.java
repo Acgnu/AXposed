@@ -31,9 +31,13 @@ public class XposedHook implements IXposedHookLoadPackage, IXposedHookZygoteInit
     private Context qqContext = null;
 //    private Activity pvpActivity = null;
     public static XModuleResources sModRes;
+    private XSDHook xsdHook = new XSDHook();
+
 
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+        xsdHook.handleLoadPackage(loadPackageParam);
+
         if (loadPackageParam.packageName.equals(QQ_PACKAGE)) {
             //得到QQ的Context
             findAndHookMethod("com.tencent.mobileqq.activity.SplashActivity", loadPackageParam.classLoader, "doOnCreate", Bundle.class, new
@@ -184,5 +188,6 @@ public class XposedHook implements IXposedHookLoadPackage, IXposedHookZygoteInit
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
         sModRes = XModuleResources.createInstance(startupParam.modulePath, null);
+        xsdHook.initZygote(startupParam);
     }
 }

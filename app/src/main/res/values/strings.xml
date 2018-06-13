@@ -2,10 +2,14 @@
     <string name="app_name">Acgnu+</string>
     <string name="setting">保护设置</string>
     <string name="storage_setting">存储设置</string>
+    <string name="set_storage_path">设置路径</string>
     <string name="storage_open">启用</string>
     <string name="pref_open">启用MSG保护</string>
     <string name="pref_pvp_open">启用PVP保护</string>
     <string name="pref_pvp_mask">启用PVP遮罩</string>
     <string name="target">目标</string>
     <string name="target_hint">目标UIN</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="unpoint">未指定</string>
 </resources>

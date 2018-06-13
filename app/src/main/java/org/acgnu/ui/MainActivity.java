@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     startActivity(new Intent(getActivity(), StorageActivity.class));
+//                    preference.
                     return false;
                 }
             });

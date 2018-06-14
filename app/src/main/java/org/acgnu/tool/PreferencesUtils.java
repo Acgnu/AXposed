@@ -1,6 +1,7 @@
 package org.acgnu.tool;
 
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import de.robv.android.xposed.XSharedPreferences;
@@ -71,6 +72,10 @@ public class PreferencesUtils {
     public static String getCustomerPath(String packageName, String defaultPath) {
         String path = getInstance().getString(packageName, "");
         return TextUtils.isEmpty(path) ? defaultPath : path;
+    }
+
+    public static String getPrefName(Context context) {
+        return context.getPackageName() + "_preferences";
     }
 }
 

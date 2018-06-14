@@ -1,15 +1,18 @@
 package org.acgnu.ui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 import org.acgnu.adapter.MyAppAdapter;
 import org.acgnu.model.MyAppinfo;
+import org.acgnu.tool.PreferencesUtils;
 import org.acgnu.xposed.R;
 
 import java.util.ArrayList;
@@ -21,19 +24,19 @@ public class StorageActivity extends AppCompatActivity {
     private List<MyAppinfo> appdata = new ArrayList<MyAppinfo>();
     private Context context;
     private SharedPreferences sharedPreferences;
+    private ProgressDialog loadingDialog;
     ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getApplicationContext();
         setContentView(R.layout.activity_storage);
-        new LoadApps().execute();
-//        ActionBar mActionBar=getSupportActionBar();
-//        mActionBar.setHomeButtonEnabled(true);
-//        mActionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBar mActionBar=getSupportActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        context = this;
+        sharedPreferences = context.getSharedPreferences(PreferencesUtils.getPrefName(this),  Context.MODE_WORLD_READABLE);
         listView = (ListView) findViewById(R.id.applist);
-        sharedPreferences = context.getSharedPreferences(context.getPackageName() + "_preferences",  Context.MODE_WORLD_READABLE);
+        new LoadApps().execute();
     }
 
     public class LoadApps extends AsyncTask<Void, Void, Void> {
@@ -42,6 +45,7 @@ public class StorageActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
+            loadingDialog = ProgressDialog.show(context, null, getString(R.string.loading), true, false);
         }
 
         @Override
@@ -66,6 +70,7 @@ public class StorageActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             MyAppAdapter adapter = new MyAppAdapter(StorageActivity.this, R.layout.my_app_list, appdata);
             listView.setAdapter(adapter);
+            loadingDialog.dismiss();
         }
     }
 
@@ -81,9 +86,9 @@ public class StorageActivity extends AppCompatActivity {
         return true;
     }
 
-//    @Override
-//    public boolean onSupportNavigateUp() {
-//        finish();
-//        return super.onSupportNavigateUp();
-//    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
+    }
 }

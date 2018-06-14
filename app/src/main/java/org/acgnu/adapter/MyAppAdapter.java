@@ -1,5 +1,6 @@
 package org.acgnu.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +34,7 @@ public class MyAppAdapter extends ArrayAdapter {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
         if (null == sharedPreferences) {
-            sharedPreferences = context.getSharedPreferences(context.getPackageName() + "_preferences",  Context.MODE_WORLD_READABLE);
+            sharedPreferences = context.getSharedPreferences(PreferencesUtils.getPrefName(getContext()),  Context.MODE_WORLD_READABLE);
         }
     }
 
@@ -51,6 +53,7 @@ public class MyAppAdapter extends ArrayAdapter {
             @Override
             public void onClick(final View view) {
                 final View dialogLayout = view.inflate(getContext(), R.layout.app_item_dialog, null);
+                EditText popupEditText = (EditText) dialogLayout.findViewById(R.id.apppath);
                 AlertDialog.Builder builder= new AlertDialog.Builder(getContext());
                 builder.setTitle(R.string.set_storage_path);
                 if (Build.VERSION.SDK_INT > 21) {
@@ -59,8 +62,10 @@ public class MyAppAdapter extends ArrayAdapter {
                     //为弹出的edittext赋已存在的值
                     String currentAppCusPath = sharedPreferences.getString(myApp.getPkg(), "");
                     if (!TextUtils.isEmpty(currentAppCusPath)) {
-                        EditText popupEditText = (EditText) dialogLayout.findViewById(R.id.apppath);
                         popupEditText.setText(currentAppCusPath.substring(currentAppCusPath.lastIndexOf("/") + 1, currentAppCusPath.length()));
+//                        popupEditText.setFocusable(true);
+//                        popupEditText.setFocusableInTouchMode(true);
+//                        ((Activity)getContext()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                     }
                 }
 
@@ -110,6 +115,7 @@ public class MyAppAdapter extends ArrayAdapter {
                         PreferencesUtils.reload();
                     }
                 });
+
                 builder.show();
             }
         });

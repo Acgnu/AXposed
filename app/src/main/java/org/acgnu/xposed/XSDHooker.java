@@ -16,7 +16,7 @@ import org.acgnu.tool.XposedUtils;
 import java.io.File;
 import java.util.ArrayList;
 
-public class XSDHook implements IXposedHookLoadPackage, IXposedHookZygoteInit{
+public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
 //    public XSharedPreferences prefs;
     public String internalSd;
     private String CURRENT_PKG = "";
@@ -32,7 +32,7 @@ public class XSDHook implements IXposedHookLoadPackage, IXposedHookZygoteInit{
 
     public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
         MyLog.log("initZygote");
-//        prefs = new XSharedPreferences(XSDHook.class.getPackage().getName());
+//        prefs = new XSharedPreferences(XSDHooker.class.getPackage().getName());
 //        prefs.makeWorldReadable();
         getExternalStorageDirectoryHook = new XC_MethodHook() {
             @Override

@@ -14,4 +14,7 @@
     <string name="unpoint">未指定</string>
     <string name="cus_path_hint">根目录文件夹名</string>
     <string name="reset_path">重置路径</string>
+    <string name="import_setting">导入设置</string>
+    <string name="export_setting">导出设置</string>
+    <string name="loading">正在加载...</string>
 </resources>

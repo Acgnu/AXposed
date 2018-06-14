@@ -8,6 +8,8 @@
             android:id="@+id/apppath"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:hint="@string/cus_path_hint"
             android:background="@null"  />
 </LinearLayout>

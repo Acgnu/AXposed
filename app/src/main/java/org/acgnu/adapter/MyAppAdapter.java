@@ -1,6 +1,5 @@
 package org.acgnu.adapter;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,7 +10,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +21,8 @@ import org.acgnu.xposed.R;
 
 import java.io.File;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 显示所有已安装应用的Listview Adapter
@@ -53,7 +54,7 @@ public class MyAppAdapter extends ArrayAdapter {
             @Override
             public void onClick(final View view) {
                 final View dialogLayout = view.inflate(getContext(), R.layout.app_item_dialog, null);
-                EditText popupEditText = (EditText) dialogLayout.findViewById(R.id.apppath);
+                final EditText popupEditText = (EditText) dialogLayout.findViewById(R.id.apppath);
                 AlertDialog.Builder builder= new AlertDialog.Builder(getContext());
                 builder.setTitle(R.string.set_storage_path);
                 if (Build.VERSION.SDK_INT > 21) {
@@ -63,9 +64,6 @@ public class MyAppAdapter extends ArrayAdapter {
                     String currentAppCusPath = sharedPreferences.getString(myApp.getPkg(), "");
                     if (!TextUtils.isEmpty(currentAppCusPath)) {
                         popupEditText.setText(currentAppCusPath.substring(currentAppCusPath.lastIndexOf("/") + 1, currentAppCusPath.length()));
-//                        popupEditText.setFocusable(true);
-//                        popupEditText.setFocusableInTouchMode(true);
-//                        ((Activity)getContext()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                     }
                 }
 
@@ -86,13 +84,14 @@ public class MyAppAdapter extends ArrayAdapter {
 
                         //显示到UI
                         myApp.setStoragepath(storageRootPath.toString());
+                        itemPathView.setText(myApp.getStoragepath());
 
                         //重载配置
                         PreferencesUtils.reload();
                     }
                 });
 
-                //添加一个取消按钮
+                //取消按钮
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -100,6 +99,7 @@ public class MyAppAdapter extends ArrayAdapter {
                     }
                 });
 
+                //重置按钮
                 builder.setNeutralButton(R.string.reset_path, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -115,8 +115,15 @@ public class MyAppAdapter extends ArrayAdapter {
                         PreferencesUtils.reload();
                     }
                 });
-
                 builder.show();
+                //300毫秒延迟后弹出软键盘
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(popupEditText, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                }, 300);
             }
         });
         return listItemLayout;

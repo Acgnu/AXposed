@@ -4,7 +4,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "org.acgnu.xposed"
+        applicationId 'org.acgnu.xposed2'
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
@@ -16,6 +16,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 

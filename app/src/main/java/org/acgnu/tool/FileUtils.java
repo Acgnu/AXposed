@@ -7,7 +7,7 @@ import java.io.*;
 public class FileUtils {
     private static final int SD_UNREADABLE = -1;    //SD卡不存在或者不可读写
     private static final int SD_WRITE_SUCCESS = 0;
-    public static final String EXPORT_DATA_NAME = "acgnu_settings.dat";
+    public static final String EXPORT_DATA_NAME = "acgnu_settings.txt";
 
     /**
      * 写入文件到SD

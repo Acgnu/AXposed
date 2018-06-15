@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        JSON.parse("{}");
+        JSON.parse("{}");
         if (savedInstanceState == null) {
             mSettingsFragment = new SettingsFragment();
             replaceFragment(R.id.settings_container, mSettingsFragment);
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isImport) {
                     //读取设置数据
                     Map<String, ?> prefs = sharedPreferences.getAll();
-                    String content = JSON.toJSONString(prefs);
+                    String content = null;//JSON.toJSONString(prefs);
                     FileUtils.savaFileToSD(FileUtils.EXPORT_DATA_NAME, content);
                     return 1;   //导出成功
                 } else {
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!TextUtils.isEmpty(content)) {
                         return -1;  //没有可导入的数据
                     }
-                    Map<String, Object> prefs = JSON.toJavaObject(JSON.parseObject(content), Map.class);
+                    Map<String, Object> prefs =  null;//JSON.toJavaObject(JSON.parseObject(content), Map.class);
                     if (null == prefs) {
                         return -2;  //可导入的数据为空
                     }

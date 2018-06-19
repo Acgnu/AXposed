@@ -6,8 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-<!--        <item name="android:windowBackground">@color/translucent</item>
-        <item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@color/translucent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorBackgroundCacheHint">#00000000</item> &lt;!&ndash; 背景缓存色透明，避免拖动全黑 &ndash;&gt;
+        <item name="android:windowNoTitle">false</item>--> <!-- 是否有标题 -->
     </style>
 
 </resources>

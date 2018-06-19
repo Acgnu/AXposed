@@ -116,14 +116,14 @@ public class MyAppAdapter extends ArrayAdapter {
                     }
                 });
                 builder.show();
-                //300毫秒延迟后弹出软键盘
+                //延迟后弹出软键盘
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
                         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.showSoftInput(popupEditText, InputMethodManager.SHOW_IMPLICIT);
                     }
-                }, 300);
+                }, 100);
             }
         });
         return listItemLayout;

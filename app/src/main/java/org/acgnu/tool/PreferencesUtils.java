@@ -65,7 +65,6 @@ public class PreferencesUtils {
 
     public static boolean hasCustomerPath(String packageName) {
         String path = getInstance().getString(packageName, "");
-        Log.d("hasCustomerPath", path);
         return TextUtils.isEmpty(path) ? false : true;
     }
 

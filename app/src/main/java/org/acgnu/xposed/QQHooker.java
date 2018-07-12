@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import com.alibaba.fastjson.JSON;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
@@ -93,7 +94,7 @@ public class QQHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 
                                     //修改目标显示昵称
                                     Field nickname = findFieldByClassAndTypeAndName(param.args[1].getClass(), String.class, "b");
-                                    String nk = "靠谱文件传输助手";
+                                    String nk = "文件传输助手";
                                     nickname.set(param.args[1], nk);
                                 }
                             }
@@ -109,7 +110,7 @@ public class QQHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                             @Override
                             public void onClick(View view) {
                                 //hook掉目标点击事件
-                                Toast.makeText(qqContext, "请在Windows客户端完成文件传输操作", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(qqContext, "设备未连接", Toast.LENGTH_SHORT).show();
                             }
                         });
                         mRecentUserUin = null;
@@ -139,6 +140,7 @@ public class QQHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     if (PreferencesUtils.isOpen()) {
                         Intent intent = (Intent) param.args[0];
+//                        System.out.println(JSON.toJSONString(intent));
                         String uin = intent.getStringExtra("uin");
                         if (PreferencesUtils.isMatchTargetQQ(uin)) {
                             param.args[0] = null;

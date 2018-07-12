@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Acgnu Plus</string>
+    <string name="setting">Protect Settings</string>
+    <string name="storage_setting">Storage</string>
+    <string name="set_storage_path">Set Path</string>
+    <string name="storage_open">Enable</string>
+    <string name="pref_open">Enable Msg Protect</string>
+    <string name="pref_pvp_open">Enable PVP Protect</string>
+    <string name="pref_pvp_mask">Enable PVP Mask</string>
+    <string name="target">Target</string>
+    <string name="target_hint">Target UIN</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="unpoint">Dispoint</string>
+    <string name="cus_path_hint">Root folder name</string>
+    <string name="reset_path">Reset Path</string>
+    <string name="import_setting">Import Preference</string>
+    <string name="export_setting">Export Preference</string>
+    <string name="loading">Loading...</string>
+    <string name="no_import_data">No data to import</string>
+    <string name="empty_import_data">Data of import is empty</string>
+    <string name="import_success">Import success</string>
+    <string name="export_success">Export success</string>
+</resources>

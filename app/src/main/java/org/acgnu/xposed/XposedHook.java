@@ -8,6 +8,7 @@ public class XposedHook implements IXposedHookLoadPackage, IXposedHookZygoteInit
     private XSDHooker xsdHooker = new XSDHooker();
     private PVPHooker pvpHooker = new PVPHooker();
     private QQHooker qqHooker = new QQHooker();
+//    private CloudMusicHooker cloudMusicHooker = new CloudMusicHooker();
 
 
     @Override
@@ -15,6 +16,7 @@ public class XposedHook implements IXposedHookLoadPackage, IXposedHookZygoteInit
         qqHooker.handleLoadPackage(loadPackageParam);
         xsdHooker.handleLoadPackage(loadPackageParam);
         pvpHooker.handleLoadPackage(loadPackageParam);
+//        cloudMusicHooker.handleLoadPackage(loadPackageParam);
     }
 
     @Override
@@ -22,4 +24,5 @@ public class XposedHook implements IXposedHookLoadPackage, IXposedHookZygoteInit
         qqHooker.initZygote(startupParam);
         xsdHooker.initZygote(startupParam);
     }
+
 }

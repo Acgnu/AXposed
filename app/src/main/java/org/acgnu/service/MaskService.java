@@ -67,12 +67,12 @@ public class MaskService extends Service
 
         LayoutInflater inflater = LayoutInflater.from(getApplication());
         //获取浮动窗口视图所在布局
-        mFloatLayout = (LinearLayout) inflater.inflate(R.layout.float_layout, null);
+        mFloatLayout = (LinearLayout) inflater.inflate(R.layout.pvp_friend_mask, null);
         //添加mFloatLayout
         mWindowManager.addView(mFloatLayout, wmParams);
 
         //头像遮罩
-        mPoaritLayout = (LinearLayout) inflater.inflate(R.layout.poarit_layout, null);
+        mPoaritLayout = (LinearLayout) inflater.inflate(R.layout.pvp_portrait_mask, null);
         wmParams.x = 0;
         wmParams.y = 0;
         wmParams.width = 195;

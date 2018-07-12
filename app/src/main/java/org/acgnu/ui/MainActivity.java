@@ -1,14 +1,19 @@
 package org.acgnu.ui;
 
 import android.annotation.TargetApi;
+import android.app.Application;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.*;
 import org.acgnu.service.MaskService;
@@ -16,6 +21,8 @@ import org.acgnu.tool.MyLog;
 import org.acgnu.tool.PreferenceHelperTask;
 import org.acgnu.tool.PreferencesUtils;
 import org.acgnu.xposed.R;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private SettingsFragment mSettingsFragment;
@@ -25,10 +32,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if (savedInstanceState == null) {
             mSettingsFragment = new SettingsFragment();
             replaceFragment(R.id.settings_container, mSettingsFragment);
         }
+
+        //设置语言为英文
+        Resources resources = getResources();
+        Configuration config = resources.getConfiguration();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        config.locale = Locale.ENGLISH;
+        resources.updateConfiguration(config, dm);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -51,10 +66,9 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object newVal) {
                     if(preference.getKey().equals("pvpmask")){
                         boolean state = (boolean) newVal;
-                        Intent svc = new Intent(getActivity(), MaskService.class);
-                        getActivity().stopService(svc);
-                        if (state) {
-                            getActivity().startService(svc);
+                        if (!state) {
+                            Intent svc = new Intent(getActivity(), MaskService.class);
+                            getActivity().stopService(svc);
                         }
                     }
                     PreferencesUtils.reload();

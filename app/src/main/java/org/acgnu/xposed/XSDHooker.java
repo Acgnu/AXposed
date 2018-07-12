@@ -14,6 +14,7 @@ import org.acgnu.tool.PreferencesUtils;
 import org.acgnu.tool.XposedUtils;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
@@ -28,10 +29,10 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
     public XC_MethodHook getObbDirsHook;
 //    public XC_MethodHook externalSdCardAccessHook; // 4.4 - 5.0
     public XC_MethodHook externalSdCardAccessHook2; // 6.0 and up
+
     boolean detectedSdPath = false;
 
     public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
-        MyLog.log("initZygote");
 //        prefs = new XSharedPreferences(XSDHooker.class.getPackage().getName());
 //        prefs.makeWorldReadable();
         getExternalStorageDirectoryHook = new XC_MethodHook() {
@@ -139,11 +140,8 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
 
     @SuppressWarnings("unchecked")
     public void handleLoadPackage(LoadPackageParam lpparam) throws Throwable {
-        MyLog.log("就绪");
         if ("android".equals(lpparam.packageName) && "android".equals(lpparam.processName)) {
-            MyLog.log("版本判断");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                MyLog.log("进入M");
                 XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.server.pm.PackageManagerService",lpparam.classLoader),
                         "grantPermissionsLPw",
                         XposedUtils.CLASS_PACKAGE_PARSER_PACKAGE, boolean.class, String.class,
@@ -162,26 +160,26 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
 //            }
         }
 
-        MyLog.log("detectedSdPath" + detectedSdPath);
         if (!detectedSdPath) {
             try {
+                //解决 Path requests must specify a user by using UserEnvironment 报错
+                Class<?> environmentcls = Class.forName("android.os.Environment");
+                Method setUserRequiredM = environmentcls.getMethod("setUserRequired", boolean.class);
+                setUserRequiredM.invoke(null, false);
+
                 File internalSdPath = Environment.getExternalStorageDirectory();
                 internalSd = internalSdPath.getPath();
                 detectedSdPath = true;
             } catch (Exception e) {
-                // nothing
+                e.printStackTrace();
             }
         }
-
-        MyLog.log("isEnabledApp：" + lpparam.packageName);
 
         if (!isEnabledApp(lpparam)) {
             return;
         }
 
         CURRENT_PKG = lpparam.packageName;
-
-        MyLog.log("符合要求，当前包名" + CURRENT_PKG);
 
         XposedHelpers.findAndHookMethod(Environment.class, "getExternalStorageDirectory", getExternalStorageDirectoryHook);
         XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", lpparam.classLoader), "getExternalFilesDir", String.class, getExternalFilesDirHook);
@@ -236,9 +234,11 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
             return;
         }
 
-        String dir = XposedUtils.appendFileSeparator(oldDirPath.getPath());
-        String newDir = dir.replaceFirst(internalSd, customInternalSd);
-        File newDirPath = new File(newDir);
+//        String dir = XposedUtils.appendFileSeparator(oldDirPath.getPath());
+        String dir = XposedUtils.appendFileSeparator(customInternalSd);
+//        String newDir = dir.replaceFirst(internalSd, customInternalSd);
+//        File newDirPath = new File(newDir);
+        File newDirPath = new File(dir);
         if (!newDirPath.exists()) {
             newDirPath.mkdirs();
         }
@@ -246,13 +246,13 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
     }
 
     public void changeDirsPath(MethodHookParam param) {
-        File[] oldDirPaths = (File[]) param.getResult();
+//        File[] oldDirPaths = (File[]) param.getResult();
         ArrayList<File> newDirPaths = new ArrayList<File>();
-        for (File oldDirPath : oldDirPaths) {
-            if (oldDirPath != null) {
-                newDirPaths.add(oldDirPath);
-            }
-        }
+//        for (File oldDirPath : oldDirPaths) {
+//            if (oldDirPath != null) {
+//                newDirPaths.add(oldDirPath);
+//            }
+//        }
 
         String customInternalSd = getCustomInternalSd();
         if (customInternalSd.isEmpty()) {
@@ -264,9 +264,12 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
             return;
         }
 
-        String dir = XposedUtils.appendFileSeparator(oldDirPaths[0].getPath());
-        String newDir = dir.replaceFirst(internalSd, customInternalSd);
-        File newDirPath = new File(newDir);
+//        String dir = XposedUtils.appendFileSeparator(oldDirPaths[0].getPath());
+//        String newDir = dir.replaceFirst(internalSd, customInternalSd);
+//        File newDirPath = new File(newDir);
+
+        String dir = XposedUtils.appendFileSeparator(customInternalSd);
+        File newDirPath = new File(dir);
 
         if (!newDirPaths.contains(newDirPath)) {
             newDirPaths.add(newDirPath);
@@ -282,7 +285,6 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
     public String getCustomInternalSd() {
 //        prefs.reload();
         String customInternalSd = PreferencesUtils.getCustomerPath(CURRENT_PKG, getInternalSd());
-        MyLog.log("getCustomInternalSd" + customInternalSd);
         customInternalSd = XposedUtils.appendFileSeparator(customInternalSd);
         return customInternalSd;
     }

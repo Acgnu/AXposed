@@ -13,7 +13,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * 数据导出的异步任务类
+ */
 public class PreferenceHelperTask extends AsyncTask<Boolean, Void, Map<String, String>> {
+    //导出数据的文件名
+    private static final String EXPORT_DATA_NAME = "acgnu_settings.txt";
+
     private Context mContext;
     public PreferenceHelperTask(Context context){
         this.mContext = context;
@@ -25,16 +31,15 @@ public class PreferenceHelperTask extends AsyncTask<Boolean, Void, Map<String, S
             Boolean isImport = type[0];
             SharedPreferences sharedPreferences = mContext.getSharedPreferences(PreferencesUtils.getPrefName(mContext), Context.MODE_WORLD_READABLE);
             if (isImport) {
-                String content = FileUtils.readFromSD(FileUtils.EXPORT_DATA_NAME);
+                //执行导入操作
+                String content = FileUtils.readFromSD(EXPORT_DATA_NAME);
                 if (TextUtils.isEmpty(content)) {
-                    result.put("code", "-1");
-                    result.put("msg", mContext.getString(R.string.no_import_data));
+                    DataUtils.setMapResult(result, -1, mContext.getString(R.string.no_import_data));
                     return result;
                 }
                 JSONObject prefsJson = new JSONObject(content);
                 if (null == prefsJson || prefsJson.length() == 0) {
-                    result.put("code", "-2");
-                    result.put("msg", mContext.getString(R.string.empty_import_data));
+                    DataUtils.setMapResult(result, -2, mContext.getString(R.string.empty_import_data));
                     return result;
                 }
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -51,21 +56,18 @@ public class PreferenceHelperTask extends AsyncTask<Boolean, Void, Map<String, S
                     }
                 }
                 editor.commit();
-                result.put("code", "0");
-                result.put("msg", mContext.getString(R.string.import_success));
+                DataUtils.setMapResult(result, 0, mContext.getString(R.string.import_success));
                 PreferencesUtils.reload();
             } else {
-                //读取设置数据
+                //执行导出操作
                 Map<String, ?> prefs = sharedPreferences.getAll();
                 String content = DataUtils.transferMap2Json(prefs).toString();
-                FileUtils.savaFileToSD(FileUtils.EXPORT_DATA_NAME, content);
-                result.put("code", "0");
-                result.put("msg", mContext.getString(R.string.export_success));
+                FileUtils.savaFileToSD(EXPORT_DATA_NAME, content);
+                DataUtils.setMapResult(result, 0, mContext.getString(R.string.export_success));
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            result.put("code", "-3");
-            result.put("msg", e.getMessage());
+            DataUtils.setMapResult(result, -3, e.getMessage());
         }
         return result;
     }
@@ -73,6 +75,6 @@ public class PreferenceHelperTask extends AsyncTask<Boolean, Void, Map<String, S
     @Override
     protected void onPostExecute(Map<String, String> result) {
         super.onPostExecute(result);
-        Toast.makeText(mContext, result.get("msg"), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, result.get(DataUtils.GLOBAL_RESULT_CODE_KEY), Toast.LENGTH_SHORT).show();
     }
 }

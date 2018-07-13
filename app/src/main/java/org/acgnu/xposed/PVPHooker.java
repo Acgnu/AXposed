@@ -21,6 +21,7 @@ public class PVPHooker implements IXposedHookLoadPackage{
     private String PVP_PACKAGE = "com.tencent.tmgp.sgame";
     private Context mContext;
     private Intent mSvcIntent;
+
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         if (loadPackageParam.packageName.equals(PVP_PACKAGE)) {

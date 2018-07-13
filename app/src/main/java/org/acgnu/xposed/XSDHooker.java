@@ -2,14 +2,12 @@ package org.acgnu.xposed;
 
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
-import org.acgnu.tool.MyLog;
 import org.acgnu.tool.PreferencesUtils;
 import org.acgnu.tool.XposedUtils;
 

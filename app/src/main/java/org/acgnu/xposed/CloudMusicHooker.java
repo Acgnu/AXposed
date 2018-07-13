@@ -1,98 +1,111 @@
 package org.acgnu.xposed;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.XModuleResources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Toast;
-import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import org.acgnu.tool.MyLog;
-import org.acgnu.tool.PreferencesUtils;
 
-import java.lang.reflect.Field;
+import static de.robv.android.xposed.XposedHelpers.callMethod;
+import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
-import static de.robv.android.xposed.XposedHelpers.*;
-import static org.acgnu.tool.XposedUtils.findFieldByClassAndTypeAndName;
+public class CloudMusicHooker{
+    private static String PACKAGE = "com.netease.cloudmusic";
+//    private Context mContext;
+//    private boolean showFlag = false;
+//    private Object strBeforeDec;
 
-public class CloudMusicHooker implements IXposedHookLoadPackage {
-    private String PACKAGE = "com.netease.cloudmusic";
-    private Context mContext;
-    private boolean showFlag = false;
-
-//    String a = "{\"com.netease.cloudmusic\":\"/storage/emulated/0/test\"}";
-
-    @Override
-    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+    public static void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         if (loadPackageParam.packageName.equals(PACKAGE)) {
-            MyLog.log("网易云 音乐 就绪");
-            Class<?> ContextClass = findClass("android.content.ContextWrapper", loadPackageParam.classLoader);
-            findAndHookMethod(ContextClass, "getApplicationContext", new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    super.afterHookedMethod(param);
-                    mContext = (Context) param.getResult();
-                }
-            });
+//            MyLog.log("网易云 音乐 就绪");
+//            Class<?> ContextClass = findClass("android.content.ContextWrapper", loadPackageParam.classLoader);
+//            findAndHookMethod(ContextClass, "getApplicationContext", new XC_MethodHook() {
+//                @Override
+//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    mContext = (Context) param.getResult();
+//                }
+//            });
 
 
-            //开始测试
-            findAndHookMethod("com.netease.cloudmusic.utils.NeteaseMusicUtils", loadPackageParam.classLoader, "c", boolean.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    showFlag = false;
-                    super.afterHookedMethod(param);
-//                    MyLog.log(JSON.toJSONString(param));
-                }
+            //开始测试（此处HOOK云音乐获取内置存储地址的函数）
+//            findAndHookMethod("com.netease.cloudmusic.utils.NeteaseMusicUtils", loadPackageParam.classLoader, "c", boolean.class, new XC_MethodHook() {
+//                @Override
+//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    showFlag = false;
+////                    MyLog.log(JSON.toJSONString(param));
+//                }
+//
+//                @Override
+//                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                    showFlag = true;
+//                    Class<?> a_auu_a = findClass("a.auu.a", loadPackageParam.classLoader);
+//                    decLog(a_auu_a, "JAoqHB8f");    //adInfo
+//                }
+//            });
 
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    showFlag = true;
-                    Class<?> a_auu_a = findClass("a.auu.a", loadPackageParam.classLoader);
-                    decLog(a_auu_a, "KAEWHA0VEA==");
-                    decLog(a_auu_a, "a0RDWg8WFTESDQYfAwggFgUTDQwSJBpQQAUWATYLHxQMAxEnAggODRUMIw8XDgoUFyQcBxQKDBE2CgUBBVgSMB0GLlcsJ25HSlJXWgYyQEk=");
-                    decLog(a_auu_a, "KAEWHA0=");
-                    decLog(a_auu_a, "JB0GEQ==");
-                    decLog(a_auu_a, "KgwB");
-                    decLog(a_auu_a, "NgsABwsV");
-                    decLog(a_auu_a, "ZQ==");
-                    decLog(a_auu_a, "ag==");
-                    decLog(a_auu_a, "ai8NFgsfHSFBBxMNEVs=");
-                    decLog(a_auu_a, "aggKHhwDWwEBAAcUFRoxHQ==");
-                    decLog(a_auu_a, "ai8NFgsfHSFB");
-                    decLog(a_auu_a, "IgsXNwEEETcAAh40HwErGhBDSko=");
-                    decLog(a_auu_a, "IgsXNwEEETcAAh40HwErGhBDTUo=");
-                    decLog(a_auu_a, "IgsXNwEEETcAAh40HwErGhBDTEo=");
-                    decLog(a_auu_a, "IgsXNwEEETcAAh40HwErGhBDT0o=");
-                    super.beforeHookedMethod(param);
-                }
-            });
+            //挂钩解密函数，打印其解密前和解密后的字符串
+//            findAndHookMethod("a.auu.a", loadPackageParam.classLoader, "c", String.class,  new XC_MethodHook() {
+//                @Override
+//                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                    strBeforeDec = param.args[0];
+//                }
+//
+//                @Override
+//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    if (showFlag) {
+//                        MyLog.log(strBeforeDec.toString(), param.getResult().toString());
+//                    }
+//                }
+//            });
 
-            findAndHookMethod("com.netease.cloudmusic.log.a", loadPackageParam.classLoader, "a", String.class, String.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    if (showFlag) {
-//                        Object arg0 = param.args[0];  //调取日志的包名
-                        Object arg1 = param.args[1];           //日志内容
-//                        MyLog.log(arg0.toString());
-                        MyLog.log(arg1.toString());
+            //去除网易云音乐广告
+            findAndHookMethod("com.netease.cloudmusic.fragment.ax", loadPackageParam.classLoader, "onCreateView",
+                LayoutInflater.class,
+                ViewGroup.class,
+                Bundle.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Bundle args = (Bundle) callMethod(param.thisObject, "getArguments");
+                        args.putSerializable("adInfo", null);
                     }
-                    super.beforeHookedMethod(param);
-                }
             });
+
+
+            //适用于多dex情况下找不到对应类的时候使用，本人手机上没有出现找不到的情况
+//            findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+//                @Override
+//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    ClassLoader cl = ((Context)param.args[0]).getClassLoader();
+//                    Class<?> hookclass = null;
+//                    try {
+//                        hookclass = cl.loadClass("com.netease.cloudmusic.fragment.ax");
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        MyLog.log("寻找com.netease.cloudmusic.fragment.ax报错");
+//                        return;
+//                    }
+//                    MyLog.log("寻找com.netease.cloudmusic.fragment.ax成功");
+//                    findAndHookMethod(hookclass, "onCreateView",
+//                            LayoutInflater.class,
+//                            ViewGroup.class,
+//                            Bundle.class,
+//                            new XC_MethodHook(){
+//                                @Override
+//                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                                    Bundle args = (Bundle) callMethod(param.thisObject, "getArguments");
+//                                    args.putSerializable("adInfo", null);
+//                                }
+//                            });
+//                }
+//            });
         }
     }
 
-    private void decLog(Class c, String arg) {
-        Class[] argCls = new Class[]{String.class};
-        Object result = callStaticMethod(c, "c", argCls, arg);
-        MyLog.log("解密字符串：" + arg + " --> " + result.toString());
-    }
+    //使用网易的解密模块解密字符串并打印
+//    private void decLog(Class c, String arg) {
+//        Class[] argCls = new Class[]{String.class};
+//        Object result = callStaticMethod(c, "c", argCls, arg);
+//        MyLog.log("解密字符串：" + arg + " --> " + result.toString());
+//    }
 }

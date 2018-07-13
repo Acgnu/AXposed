@@ -1,23 +1,21 @@
 package org.acgnu.ui;
 
 import android.annotation.TargetApi;
-import android.app.Application;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import org.acgnu.service.MaskService;
-import org.acgnu.tool.MyLog;
 import org.acgnu.tool.PreferenceHelperTask;
 import org.acgnu.tool.PreferencesUtils;
 import org.acgnu.xposed.R;

@@ -1,8 +1,7 @@
-package org.acgnu.xposed;
+package org.acgnu.xposed.module;
 
 import android.os.Build;
 import android.os.Environment;
-import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
@@ -10,13 +9,14 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 import org.acgnu.tool.PreferencesUtils;
 import org.acgnu.tool.XposedUtils;
+import org.acgnu.xposed.MyHooker;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
-//    public XSharedPreferences prefs;
+public class XSDHooker implements MyHooker {
+    //    public XSharedPreferences prefs;
     public String internalSd;
     private String CURRENT_PKG = "";
     public XC_MethodHook getExternalStorageDirectoryHook;
@@ -25,12 +25,18 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
     public XC_MethodHook getExternalStoragePublicDirectoryHook;
     public XC_MethodHook getExternalFilesDirsHook;
     public XC_MethodHook getObbDirsHook;
-//    public XC_MethodHook externalSdCardAccessHook; // 4.4 - 5.0
+    //    public XC_MethodHook externalSdCardAccessHook; // 4.4 - 5.0
     public XC_MethodHook externalSdCardAccessHook2; // 6.0 and up
 
     boolean detectedSdPath = false;
 
-    public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
+    @Override
+    public String getTargetPackage() {
+        return null;
+    }
+
+    @Override
+    public void doHookInitZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
 //        prefs = new XSharedPreferences(XSDHooker.class.getPackage().getName());
 //        prefs.makeWorldReadable();
         getExternalStorageDirectoryHook = new XC_MethodHook() {
@@ -136,11 +142,11 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
         };
     }
 
-    @SuppressWarnings("unchecked")
-    public void handleLoadPackage(LoadPackageParam lpparam) throws Throwable {
-        if ("android".equals(lpparam.packageName) && "android".equals(lpparam.processName)) {
+    @Override
+    public void doHookOnLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+        if ("android".equals(loadPackageParam.packageName) && "android".equals(loadPackageParam.processName)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.server.pm.PackageManagerService",lpparam.classLoader),
+                XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.android.server.pm.PackageManagerService",loadPackageParam.classLoader),
                         "grantPermissionsLPw",
                         XposedUtils.CLASS_PACKAGE_PARSER_PACKAGE, boolean.class, String.class,
                         externalSdCardAccessHook2);
@@ -173,20 +179,20 @@ public class XSDHooker implements IXposedHookLoadPackage, IXposedHookZygoteInit{
             }
         }
 
-        if (!isEnabledApp(lpparam)) {
+        if (!isEnabledApp(loadPackageParam)) {
             return;
         }
 
-        CURRENT_PKG = lpparam.packageName;
+        CURRENT_PKG = loadPackageParam.packageName;
 
         XposedHelpers.findAndHookMethod(Environment.class, "getExternalStorageDirectory", getExternalStorageDirectoryHook);
-        XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", lpparam.classLoader), "getExternalFilesDir", String.class, getExternalFilesDirHook);
-        XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", lpparam.classLoader), "getObbDir", getObbDirHook);
+        XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", loadPackageParam.classLoader), "getExternalFilesDir", String.class, getExternalFilesDirHook);
+        XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", loadPackageParam.classLoader), "getObbDir", getObbDirHook);
         XposedHelpers.findAndHookMethod(Environment.class, "getExternalStoragePublicDirectory", String.class, getExternalStoragePublicDirectoryHook);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", lpparam.classLoader), "getExternalFilesDirs", String.class, getExternalFilesDirsHook);
-            XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", lpparam.classLoader), "getObbDirs", getObbDirsHook);
+            XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", loadPackageParam.classLoader), "getExternalFilesDirs", String.class, getExternalFilesDirsHook);
+            XposedHelpers.findAndHookMethod(XposedHelpers.findClass("android.app.ContextImpl", loadPackageParam.classLoader), "getObbDirs", getObbDirsHook);
         }
     }
 

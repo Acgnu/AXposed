@@ -1,9 +1,12 @@
-package org.acgnu.xposed;
+package org.acgnu.xposed.module;
 
 import dalvik.system.DexFile;
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import org.acgnu.tool.MyLog;
+import org.acgnu.xposed.MyHooker;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -14,54 +17,63 @@ import java.util.Date;
 import java.util.Enumeration;
 
 
-/**
- * Created by mbpeele on 2/24/16.
- */
-public class PackageHooker {
+public class PackageHooker implements MyHooker {
+    private XC_LoadPackage.LoadPackageParam loadPackageParam;
 
-    private final XC_LoadPackage.LoadPackageParam loadPackageParam;
-
-    public PackageHooker(XC_LoadPackage.LoadPackageParam param) {
-        loadPackageParam = param;
-        try {
-            hook();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    public String getTargetPackage() {
+        return "com.taobao.idlefish";
     }
 
+    @Override
+    public void doHookInitZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
+
+    }
+
+    @Override
+    public void doHookOnLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+        if (this.loadPackageParam == null) {
+            this.loadPackageParam = loadPackageParam;
+            try {
+                hook();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void hook() throws IOException, ClassNotFoundException {
         DexFile dexFile = new DexFile(loadPackageParam.appInfo.sourceDir);
         Enumeration<String> classNames = dexFile.entries();
         while (classNames.hasMoreElements()) {
             String className = classNames.nextElement();
-
             if (!className.startsWith("MessageFor")) {
                 continue;
             }
             if (isClassNameValid(className)) {
                 final Class clazz = Class.forName(className, false, loadPackageParam.classLoader);
-
-
                 for (Method method: clazz.getDeclaredMethods()) {
                     if (!Modifier.isAbstract(method.getModifiers())) {
                         XposedBridge.hookMethod(method, new XC_MethodHook() {
                             @Override
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                log("HOOKED: " + clazz.getName() + "\\" + param.method.getName());
+                                String methodName = clazz.getName() + "\\" + param.method.getName();
+                                MyLog.log("执行 -> " + methodName + ", 结果:" + MyLog.getObjectString(param.getResult()), true);
+                            }
+
+                            @Override
+                            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                String methodName = clazz.getName() + "\\" + param.method.getName();
+                                int argIndex = 1;
+                                for (Object arg : param.args) {
+                                    MyLog.log("执行 -> " + methodName + ", 参数:" + argIndex++ + MyLog.getObjectString(arg), true);
+                                }
                             }
                         });
                     }
                 }
             }
         }
-    }
-
-
-    public void log(Object str) {
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-        XposedBridge.log("[" + df.format(new Date()) + "]:  " + str.toString());
     }
 
     public boolean isClassNameValid(String className) {
@@ -72,23 +84,5 @@ public class PackageHooker {
     }
 
 
-    private void dumpClass(Class actions) {
-        XposedBridge.log("Dump class " + actions.getName());
 
-        XposedBridge.log("Methods");
-        Method[] m = actions.getDeclaredMethods();
-        for (int i = 0; i < m.length; i++) {
-            XposedBridge.log(m[i].toString());
-        }
-        XposedBridge.log("Fields");
-        Field[] f = actions.getDeclaredFields();
-        for (int j = 0; j < f.length; j++) {
-            XposedBridge.log(f[j].toString());
-        }
-        XposedBridge.log("Classes");
-        Class[] c = actions.getDeclaredClasses();
-        for (int k = 0; k < c.length; k++) {
-            XposedBridge.log(c[k].toString());
-        }
-    }
 }

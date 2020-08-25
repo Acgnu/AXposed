@@ -1,6 +1,7 @@
 package org.acgnu.tool;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -58,29 +59,29 @@ public class XposedUtils {
         for (Field field : fields) {
             try {
                 String fieldType = field.getType().getSimpleName();
-                MyLog.log(fieldType + ":" + field.getName());
+                MyLog.log(fieldType + ":" + field.getName(), true);
                 Object filedV = findFieldIfExists(param.thisObject.getClass(), field.getName());
                 if (null != filedV) {
                     Object objV = getObjectField(param.thisObject, field.getName());
                     if (null != objV) {
                         if ("String".equals(fieldType)) {
                             String stringV = (String)objV;
-                            MyLog.log("当前field:" + field.getName() + ", value:" + stringV);
+                            MyLog.log("当前field:" + field.getName() + ", value:" + stringV, true);
                         }else if ("CharSequence".equals(fieldType)){
                             CharSequence charSequence = (CharSequence) objV;
-                            MyLog.log("当前field:" + field.getName() + ", value:" + charSequence.toString());
+                            MyLog.log("当前field:" + field.getName() + ", value:" + charSequence.toString(), true);
                         }else if ("long".equals(fieldType)){
                             long longv = (long) objV;
-                            MyLog.log("当前field:" + field.getName() + ", value:" + longv);
+                            MyLog.log("当前field:" + field.getName() + ", value:" + longv, true);
                         }else{
-                            MyLog.log("当前field:" + field.getName() + ", value:" + objV.toString());
+                            MyLog.log("当前field:" + field.getName() + ", value:" + objV.toString(), true);
                         }
                     }else{
 //                        Log.log("当前field:" + field.getName() + ", value:null");
                     }
                 }
             } catch (Exception e){
-                MyLog.log(e.getMessage());
+                MyLog.log(e.getMessage(), true);
             }
         }
     }
@@ -90,5 +91,38 @@ public class XposedUtils {
             path += File.separator;
         }
         return path;
+    }
+
+    public static void showCallStack(){
+        Throwable ex = new Throwable();
+        StackTraceElement[] stackElements = ex.getStackTrace();
+        if (stackElements != null) {
+            MyLog.log("调用堆栈:--------------------", true);
+            for (int i = 0; i < stackElements.length; i++) {
+                MyLog.log(stackElements[i].getClassName() + " -> " +
+                        stackElements[i].getMethodName() + "()"
+                , true);
+            }
+        }
+    }
+
+    public static void dumpClass(Class actions) {
+        MyLog.log("Dump class " + actions.getName(), true);
+
+        MyLog.log("Methods", true);
+        Method[] m = actions.getDeclaredMethods();
+        for (int i = 0; i < m.length; i++) {
+            MyLog.log(m[i].toString(), true);
+        }
+        MyLog.log("Fields", true);
+        Field[] f = actions.getDeclaredFields();
+        for (int j = 0; j < f.length; j++) {
+            MyLog.log(f[j].toString(), true);
+        }
+        MyLog.log("Classes", true);
+        Class[] c = actions.getDeclaredClasses();
+        for (int k = 0; k < c.length; k++) {
+            MyLog.log(c[k].toString(), true);
+        }
     }
 }

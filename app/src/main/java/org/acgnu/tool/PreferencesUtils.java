@@ -3,9 +3,8 @@ package org.acgnu.tool;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import de.robv.android.xposed.XSharedPreferences;
-import org.acgnu.xposed.PackageHooker;
+import org.acgnu.xposed.module.PackageHooker;
 
 public class PreferencesUtils {
     private static XSharedPreferences instance = null;

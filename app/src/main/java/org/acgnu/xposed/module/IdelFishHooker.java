@@ -8,10 +8,14 @@ import org.acgnu.tool.MyLog;
 import org.acgnu.xposed.MyHooker;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.List;
+
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public class IdelFishHooker implements MyHooker {
-    private boolean doLog = false;
+    private boolean doLog = true;
 
     @Override
     public String getTargetPackage() {
@@ -54,13 +58,14 @@ public class IdelFishHooker implements MyHooker {
                             return;
                         }
                         JSONArray resultList = jsonData.getJSONArray("resultList");
+                        List<String> filterList = Arrays.asList("ad", "Bagtag", "聚合卡片");
                         MyLog.log("==========设置bytedate参数集=============", doLog);
                         for (int i = 0; i < resultList.length(); i++) {
                             JSONObject listItem = resultList.getJSONObject(i);
                             MyLog.log(listItem.toString(), doLog);
                             String bizType = listItem.getJSONObject("data").getJSONObject("item").getJSONObject("main").getJSONObject("clickParam").getJSONObject("args").getString("biz_type");
-                            if (bizType.equals("ad") || bizType.equals("Bagtag")) {
-                                MyLog.log("匹配到广告/细选:" + listItem.toString(), doLog);
+                            if (filterList.contains(bizType)) {
+                                MyLog.log("匹配到广告/细选等:" + listItem.toString(), doLog);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                     MyLog.log("广告已移除:" + listItem.toString(), doLog);
                                     resultList.remove(i);

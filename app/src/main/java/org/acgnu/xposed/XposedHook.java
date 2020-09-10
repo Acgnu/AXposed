@@ -6,22 +6,18 @@ import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import org.acgnu.xposed.module.CloudMusicHooker;
 import org.acgnu.xposed.module.IdelFishHooker;
+import org.acgnu.xposed.module.OPlusHooker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class XposedHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
-    private static List<MyHooker> myHookers;
-
-    static {
-        myHookers = new ArrayList<>();
-        myHookers.add(new IdelFishHooker());
-        myHookers.add(new CloudMusicHooker());
-//        myHookers.add(new PVPHooker());
-//        myHookers.add(new QQHooker());
-//        myHookers.add(new XSDHooker());
-//        myHookers.add(new PackageHooker());
-    }
+    private static List<MyHooker> myHookers = Arrays.asList(
+            new IdelFishHooker(),
+            new CloudMusicHooker(),
+            new OPlusHooker()
+    );
 
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {

@@ -1,9 +1,11 @@
 package org.acgnu.xposed.module;
 
+import android.util.Log;
 import dalvik.system.DexFile;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import org.acgnu.tool.MyLog;
 import org.acgnu.xposed.MyHooker;
@@ -82,6 +84,48 @@ public class PackageHooker implements MyHooker {
                 && !className.contains("BuildConfig")
                 && !className.equals(loadPackageParam.packageName + ".R");
     }
+
+
+//    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+//        final String targetPackage = "com.xiaojianbang";
+//        String targetPackageFull = targetPackage + ".xposeddemo";
+//        if (loadPackageParam.packageName.equals(targetPackageFull)) {
+//            XposedHelpers.findAndHookMethod(ClassLoader.class, "loadClass", new Object[]{String.class, new XC_MethodHook() {
+//                /* access modifiers changed from: protected */
+//                public void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    Class clazz = (Class) param.getResult();
+//                    String clazzName = clazz.getName();
+//                    StringBuilder sb = new StringBuilder();
+//                    sb.append("LoadClass: ");
+//                    sb.append(clazzName);
+//                    Log.d("dajianbang", sb.toString());
+//                    if (clazzName.contains(targetPackage)) {
+//                        Method[] mds = clazz.getDeclaredMethods();
+//                        for (int i = 0; i < mds.length; i++) {
+//                            final Method md = mds[i];
+//                            int mod = mds[i].getModifiers();
+//                            if (!Modifier.isAbstract(mod) && !Modifier.isNative(mod) && !Modifier.isInterface(mod)) {
+//                                XposedBridge.hookMethod(mds[i], new XC_MethodHook() {
+//                                    /* access modifiers changed from: protected */
+//                                    public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                                        if (md.getName().contains("complexParameterFunc")) {
+//                                            for (Object obj : param.args) {
+//                                                Log.d("dajianbang", obj.getClass().getName());
+//                                            }
+//                                        }
+//                                        StringBuilder sb = new StringBuilder();
+//                                        sb.append("Hook Method: ");
+//                                        sb.append(md.toString());
+//                                        Log.d("dajianbang", sb.toString());
+//                                    }
+//                                });
+//                            }
+//                        }
+//                    }
+//                }
+//            }});
+//        }
+//    }
 
 
 

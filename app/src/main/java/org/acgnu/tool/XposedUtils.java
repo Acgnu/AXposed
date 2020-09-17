@@ -1,12 +1,18 @@
 package org.acgnu.tool;
 
+import android.content.pm.ApplicationInfo;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
+import org.acgnu.xposed.BuildConfig;
 
 import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static de.robv.android.xposed.XposedHelpers.*;
 
@@ -124,5 +130,26 @@ public class XposedUtils {
         for (int k = 0; k < c.length; k++) {
             MyLog.log(c[k].toString(), true);
         }
+    }
+
+
+    /**
+     * 在安卓6之后, 无法使用shared_preference无法使用worldReadAble
+     * 解决方式:  在正常使用 shared_preference之后, 调用此方法
+     * 读取方式:  XSharedPreferences pref = new XSharedPreferences(BuildConfig.APPLICATION_ID, "main");
+     * @param applicationInfo
+     */
+    public void setWorldReadable(ApplicationInfo applicationInfo) {
+        File dataDir = new File(applicationInfo.dataDir);
+        File prefsDir = new File(dataDir, "shared_prefs");
+        File prefsFile = new File(prefsDir, "main" + ".xml");
+        if (prefsFile.exists()) {
+            //Toast.makeText(this, prefsFile.path.toString(), Toast.LENGTH_LONG).show()
+            for (File file : Arrays.asList(dataDir, prefsDir, prefsFile)) {
+                file.setReadable(true, false);
+                file.setExecutable(true, false);
+            }
+        }
+//        XSharedPreferences pref = new XSharedPreferences(BuildConfig.APPLICATION_ID, "main");
     }
 }

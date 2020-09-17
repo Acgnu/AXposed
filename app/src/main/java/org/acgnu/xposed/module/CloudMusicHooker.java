@@ -115,7 +115,7 @@ public class CloudMusicHooker implements MyHooker {
         //免更新(versioncode)
 //        findAndHookMethod("android.app.ApplicationPackageManager", loadPackageParam.classLoader, "getPackageInfo",
 //                String.class,
-//                Integer.class,
+//                int.class,
 //                new XC_MethodHook() {
 //                    @Override
 //                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.acgnu.xposed">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="org.acgnu.xposed">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <!-- 在SDCard中创建与删除文件权限 -->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-    <!-- 往SDCard写入数据权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/> <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/> <!-- 往SDCard写入数据权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
@@ -12,18 +11,25 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
+        <service
+                android:name="org.acgnu.third.oplus.OPlusPassCodeService"
+                android:enabled="true"
+                android:process="system">
+        </service>
+
         <activity android:name="org.acgnu.ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
-                android:label="@string/storage_setting"
-                android:name="org.acgnu.ui.StorageActivity">
+                android:name="org.acgnu.ui.StorageActivity"
+                android:label="@string/storage_setting">
             <intent-filter>
-                <action android:name="org.acgnu.activity.applist" />
+                <action android:name="org.acgnu.activity.applist"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -35,15 +41,29 @@
                 android:persistent="true">
         </service>
 
+        <receiver android:name="org.acgnu.third.oplus.OPlusPassCodeWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="oplus.passcode.widget.action.CLICK"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/oplus_passcode_widget"/>
+        </receiver>
+
         <meta-data
                 android:name="xposedmodule"
                 android:value="true"/>
         <meta-data
                 android:name="xposeddescription"
-                android:value="自古真情留不住，唯有套路得人心"/>
+                android:value="没有人能比我更流氓"/>
         <meta-data
                 android:name="xposedminversion"
                 android:value="52"/>
+        <meta-data
+                android:name="android.max_aspect"
+                android:value="2.1"/>
     </application>
 
 </manifest>

@@ -30,12 +30,4 @@
             <intent android:action="org.acgnu.activity.applist"  />
         </PreferenceScreen>
     </PreferenceCategory>
-
-    <PreferenceCategory android:title="其他">
-        <PreferenceScreen
-                android:title="显示通行码"
-                android:key="show_oplus_passcode"
-                android:summary="">
-        </PreferenceScreen>
-    </PreferenceCategory>
 </PreferenceScreen>

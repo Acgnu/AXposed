@@ -16,8 +16,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import org.acgnu.service.MaskService;
-import org.acgnu.third.oplus.OPlusFragmenClickListener;
-import org.acgnu.third.oplus.OPlusPassCodeFragment;
 import org.acgnu.tool.PreferenceHelperTask;
 import org.acgnu.tool.PreferencesUtils;
 import org.acgnu.xposed.R;
@@ -26,7 +24,6 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private SettingsFragment mSettingsFragment;
-    private OPlusPassCodeFragment mOPlusPassCodeFragment;
     private PopupMenu popup;
 
     @Override
@@ -37,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             mSettingsFragment = new SettingsFragment();
             replaceFragment(R.id.settings_container, mSettingsFragment);
-//            replaceFragment(R.id.settings_container, new OPlusPassCodeFragment());
         }
 
         //设置语言为英文
@@ -46,11 +42,6 @@ public class MainActivity extends AppCompatActivity {
         DisplayMetrics dm = resources.getDisplayMetrics();
         config.locale = Locale.ENGLISH;
         resources.updateConfiguration(config, dm);
-
-//        Intent oPlusPassCodeService = new Intent(getApplicationContext(), OPlusPassCodeService.class);
-//        i.setAction(Inten.ACTION_START);
-//        oPlusPassCodeService.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        getApplicationContext().startService(oPlusPassCodeService);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -87,14 +78,12 @@ public class MainActivity extends AppCompatActivity {
             Preference open = findPreference("open");
             Preference target = findPreference("target");
             Preference storageopen = findPreference("storageopen");
-            Preference oplusPassCodeBtn = findPreference("show_oplus_passcode");
 
             pvpmask.setOnPreferenceChangeListener(listener);
             pvpopen.setOnPreferenceChangeListener(listener);
             open.setOnPreferenceChangeListener(listener);
             target.setOnPreferenceChangeListener(listener);
             storageopen.setOnPreferenceChangeListener(listener);
-            oplusPassCodeBtn.setOnPreferenceClickListener(new OPlusFragmenClickListener(getFragmentManager(), this));
         }
     }
 

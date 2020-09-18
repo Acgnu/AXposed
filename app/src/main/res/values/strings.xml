@@ -21,5 +21,4 @@
     <string name="empty_import_data">可导入的数据为空</string>
     <string name="import_success">导入成功</string>
     <string name="export_success">导出成功</string>
-    <string name="oplus_passcode">O+通行码</string>
 </resources>

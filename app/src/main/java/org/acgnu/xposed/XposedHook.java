@@ -10,11 +10,13 @@ import org.acgnu.xposed.module.IdelFishHooker;
 
 import java.util.Arrays;
 import java.util.List;
+import org.acgnu.xposed.module.OPlusHooker;
 
 public class XposedHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private static List<MyHooker> myHookers = Arrays.asList(
             new IdelFishHooker()
             ,new CloudMusicHooker()
+            ,new OPlusHooker()
 //            ,new DJIHooker()
     );
 

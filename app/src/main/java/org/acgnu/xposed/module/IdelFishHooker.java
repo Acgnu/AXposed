@@ -15,7 +15,7 @@ import java.util.List;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public class IdelFishHooker implements MyHooker {
-    private boolean doLog = true;
+    private boolean doLog = false;
 
     @Override
     public String getTargetPackage() {
